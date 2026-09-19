@@ -1,20 +1,80 @@
 # Autonomous Robot Navigation and Dynamic Obstacle Avoidance Using ROS 2
 
-A fully simulated autonomous robot navigation system built using **ROS 2 Humble, TurtleBot3 Burger, Gazebo, Cartographer, AMCL, Nav2, RViz2, rosbridge, and a custom web dashboard**.
+## Project Introduction
 
-The robot can navigate through user-selected waypoints, use LiDAR to detect obstacles, avoid dynamic obstacles, replan its path using Nav2, and display real-time navigation information through a web dashboard.
+This project implements an autonomous mobile robot navigation system using **ROS 2**, **Gazebo**, **TurtleBot3 Burger**, **LiDAR**, **AMCL**, **Nav2**, and a custom **Waypoint Navigator**.
 
-The entire project runs in simulation using **WSL2 and Ubuntu 22.04**, so no physical robot hardware is required.
+The robot can:
+
+- Navigate from Point A to Point B
+- Accept multiple waypoints through RViz
+- Navigate through waypoints sequentially
+- Detect obstacles using simulated LiDAR
+- Avoid static and dynamic obstacles
+- Replan its path when obstacles are encountered
+- Display navigation and mission information through a web dashboard
+
+---
+
+# Requirements
+
+Before running the project, make sure the system has:
+
+- Windows 10/11
+- WSL2
+- Ubuntu 22.04
+- ROS 2 Humble
+- Gazebo
+- TurtleBot3
+- Nav2
+- Cartographer
+- rosbridge
+
+---
+
+# First-Time Setup
+
+Clone the repository:
+
+```bash
+git clone https://github.com/Akadestroyers777/autonomous-robot-navigation-ros2.git
+```
+
+Rename it to the required workspace:
+
+```bash
+mv autonomous-robot-navigation-ros2 ~/autonomous_robot_ws
+```
+
+Enter the workspace:
+
+```bash
+cd ~/autonomous_robot_ws
+```
+
+Build the project:
+
+```bash
+source /opt/ros/humble/setup.bash
+colcon build --symlink-install
+source install/setup.bash
+```
+
+Make the launcher executable:
+
+```bash
+chmod +x run_project.sh
+```
+
+After the first-time setup, use the Master Command below to run the complete project.
 
 ---
 
 # Master Command
 
-The complete project can be started automatically using the project launcher.
-
 Start WSL Ubuntu:
 
-```bash
+```powershell
 wsl -d Ubuntu-22.04
 ```
 
@@ -25,7 +85,7 @@ cd ~/autonomous_robot_ws
 ./run_project.sh
 ```
 
-The automated launcher starts:
+The launcher automatically starts:
 
 - Gazebo
 - TurtleBot3 Burger
@@ -34,364 +94,125 @@ The automated launcher starts:
 - RViz2
 - rosbridge
 - Web Dashboard
-- Custom Waypoint Navigator
+- Waypoint Navigator
 
 ---
 
 # Manual Step-by-Step Execution
 
-If the automated launcher is not used, the complete system can be started manually.
+If the automated launcher is not used, start the components manually in this order.
 
-The components should be started in the following order.
-
----
-
-## Step 1 — Start Gazebo
-
-Open a terminal and start Ubuntu:
-
-```bash
-wsl -d Ubuntu-22.04
-```
-
-Source ROS 2:
+## 1. Gazebo
 
 ```bash
 source /opt/ros/humble/setup.bash
-```
-
-Set the TurtleBot3 model:
-
-```bash
 export TURTLEBOT3_MODEL=burger
-```
 
-Start the TurtleBot3 Gazebo world:
-
-```bash
 ros2 launch turtlebot3_gazebo turtlebot3_world.launch.py
 ```
 
-Gazebo starts the simulated environment and TurtleBot3 Burger.
-
----
-
-## Step 2 — Start AMCL
-
-Open a new WSL terminal:
-
-```bash
-wsl -d Ubuntu-22.04
-```
-
-Source ROS 2 and the workspace:
+## 2. AMCL
 
 ```bash
 source /opt/ros/humble/setup.bash
 source ~/autonomous_robot_ws/install/setup.bash
-```
 
-Start AMCL using the saved map:
-
-```bash
 ros2 launch nav2_bringup localization_launch.py \
 map:=/home/saishrinivas07/autonomous_robot_ws/maps/turtlebot3_map.yaml \
 use_sim_time:=True
 ```
 
-AMCL localizes the robot on the saved map.
-
----
-
-## Step 3 — Start Nav2
-
-Open another WSL terminal:
-
-```bash
-wsl -d Ubuntu-22.04
-```
-
-Source ROS 2 and the workspace:
+## 3. Nav2
 
 ```bash
 source /opt/ros/humble/setup.bash
 source ~/autonomous_robot_ws/install/setup.bash
-```
 
-Start Nav2:
-
-```bash
 ros2 launch nav2_bringup navigation_launch.py \
 map:=/home/saishrinivas07/autonomous_robot_ws/maps/turtlebot3_map.yaml \
 use_sim_time:=True
 ```
 
-Nav2 provides:
-
-- Global planning
-- Local planning
-- Global costmap
-- Local costmap
-- Obstacle avoidance
-- Path replanning
-
----
-
-## Step 4 — Start RViz2
-
-Open another WSL terminal:
-
-```bash
-wsl -d Ubuntu-22.04
-```
-
-Source ROS 2:
+## 4. RViz2
 
 ```bash
 source /opt/ros/humble/setup.bash
-```
 
-Start RViz2:
-
-```bash
 ros2 run rviz2 rviz2 \
 -d /opt/ros/humble/share/nav2_bringup/rviz/nav2_default_view.rviz \
 --ros-args -p use_sim_time:=true
 ```
 
-RViz2 is used to visualize:
-
-- Map
-- Robot
-- LiDAR
-- AMCL particles
-- Global costmap
-- Local costmap
-- Global path
-- Local path
-- Robot pose
-- Navigation information
-- Selected waypoints
-
-RViz2 is also used to select navigation points using **Publish Point**.
-
----
-
-## Step 5 — Start rosbridge
-
-Open another WSL terminal:
-
-```bash
-wsl -d Ubuntu-22.04
-```
-
-Source ROS 2:
+## 5. rosbridge
 
 ```bash
 source /opt/ros/humble/setup.bash
-```
 
-Start rosbridge:
-
-```bash
 ros2 launch rosbridge_server rosbridge_websocket_launch.xml
 ```
 
-rosbridge provides the connection between ROS 2 and the web dashboard.
-
-The WebSocket runs at:
-
-```text
-ws://localhost:9090
-```
-
----
-
-## Step 6 — Start the Waypoint Navigator
-
-Open another WSL terminal:
-
-```bash
-wsl -d Ubuntu-22.04
-```
-
-Go to the workspace:
+## 6. Waypoint Navigator
 
 ```bash
 cd ~/autonomous_robot_ws
-```
-
-Source ROS 2:
-
-```bash
 source /opt/ros/humble/setup.bash
-```
-
-Source the workspace:
-
-```bash
 source install/setup.bash
-```
 
-Start the custom waypoint navigator:
-
-```bash
 ros2 run autonomous_robot waypoint_navigator
 ```
 
-The waypoint navigator receives points selected in RViz2 through:
+Select waypoints in RViz2 using **Publish Point**, then press **ENTER** in the waypoint navigator terminal.
+
+The robot will navigate through the selected waypoints sequentially.
+
+---
+
+# System Architecture
 
 ```text
-/clicked_point
-```
+Gazebo / TurtleBot3 Burger
+          |
+          v
+      LiDAR /scan
+          |
+          v
+ Cartographer Saved Map
+          |
+          v
+    AMCL Localization
+          |
+          v
+        Nav2
+          |
+          +----------------------+
+          |                      |
+          v                      v
+   Global Planner          Local Planner
+          |                      |
+          |                Local Costmap
+          |                      |
+          +----------+-----------+
+                     |
+                     v
+              Obstacle Avoidance
+                     |
+                     v
+                TurtleBot3
 
-Select multiple points using **Publish Point** in RViz2.
 
-After selecting the required points, press **ENTER** in the waypoint navigator terminal.
-
-The robot will navigate through the selected points sequentially.
-
----
-
-# Project Overview
-
-This project implements a complete autonomous robot navigation system using **ROS 2 Humble** and **TurtleBot3 Burger**.
-
-The robot can:
-
-- Navigate autonomously between user-selected points
-- Use LiDAR for obstacle detection
-- Localize itself using AMCL
-- Use a saved map for navigation
-- Plan paths using Nav2
-- Use global and local planners
-- Use global and local costmaps
-- Detect dynamic obstacles
-- Avoid obstacles
-- Replan its path when obstacles are detected
-- Navigate through multiple waypoints sequentially
-- Display the navigation system in RViz2
-- Track mission progress
-- Track distance to the current waypoint
-- Publish mission information through ROS 2 topics
-- Provide real-time information through a web dashboard
-- Visualize LiDAR obstacle information using a dashboard radar
-- Start the complete system automatically using a launcher script
-
----
-
-# Project Objective
-
-The main objective is to create a simulated autonomous robot that can travel from a selected starting position to one or more destination points while detecting and avoiding obstacles.
-
-The system demonstrates:
-
-1. Robot simulation
-2. Environment mapping
-3. Robot localization
-4. Autonomous navigation
-5. Obstacle detection
-6. Dynamic obstacle avoidance
-7. Path replanning
-8. Multi-waypoint navigation
-9. Mission monitoring
-10. Web-based visualization
-
----
-
-# Project Architecture
-
-```text
-                         GAZEBO
-                            |
-                            v
-                   TurtleBot3 Burger
-                            |
-                            v
-                         LiDAR
-                            |
-                          /scan
-                            |
-                            v
-                         AMCL
-                            |
-                      Localization
-                            |
-                            v
-                          NAV2
-                 +----------+----------+
-                 |                     |
-                 v                     v
-          Global Planner        Local Planner
-                 |                     |
-                 +----------+----------+
-                            |
-                            v
-                         Costmaps
-                 +----------+----------+
-                 |                     |
-                 v                     v
-          Global Costmap        Local Costmap
-                 |                     |
-                 +----------+----------+
-                            |
-                            v
-                   Obstacle Avoidance
-                            |
-                            v
-                        Replanning
-                            |
-                            v
-                      TurtleBot3
-```
-
----
-
-# Waypoint Navigation Architecture
-
-```text
-RViz2
-   |
-   | Publish Point
-   v
-/clicked_point
-   |
-   v
+RViz Publish Point
+          |
+          v
 Custom Waypoint Navigator
-   |
-   | Select Multiple Waypoints
-   |
-   | Press ENTER
-   v
-Nav2 Goals
-   |
-   +----> Waypoint 1
-   |
-   +----> Waypoint 2
-   |
-   +----> Waypoint 3
-   |
-   +----> Waypoint ...
-   |
-   v
-MISSION COMPLETE
-```
+          |
+          v
+      Nav2 Goals
 
----
 
-# Web Dashboard Architecture
-
-```text
 ROS 2
   |
   v
-ROS 2 Topics
-  |
-  v
 rosbridge
-  |
-  v
-WebSocket
   |
   v
 Web Dashboard
@@ -402,29 +223,29 @@ Web Dashboard
 # Technologies Used
 
 - ROS 2 Humble
-- Ubuntu 22.04
-- WSL2
 - Gazebo
 - TurtleBot3 Burger
-- LiDAR
-- Cartographer
-- AMCL
-- Nav2
-- RViz2
 - Python
+- Nav2
+- AMCL
+- Cartographer
+- RViz2
+- LiDAR
+- rosbridge
 - HTML
 - CSS
 - JavaScript
-- rosbridge
-- WebSocket
+- ROSLIB.js
+- WSL2
+- Ubuntu 22.04
 
 ---
 
 # Mapping
 
-The environment was mapped using **Cartographer**.
+The environment was mapped using the simulated TurtleBot3 LiDAR and Cartographer.
 
-The saved map is included in the project:
+The generated map is stored in:
 
 ```text
 maps/
@@ -432,417 +253,165 @@ maps/
 └── turtlebot3_map.yaml
 ```
 
-## Map Details
-
-- **Resolution:** 0.05 m/pixel
-- **Map Size:** 124 × 120 pixels
-- **Approximate Environment Size:** 6.2 × 6.0 m
-- **Origin:** `[-1.2, -2.61, 0]`
-
-The map YAML file contains:
-
-```yaml
-image: turtlebot3_map.pgm
-mode: trinary
-resolution: 0.05
-origin: [-1.2, -2.61, 0]
-negate: 0
-occupied_thresh: 0.65
-free_thresh: 0.25
-```
-
----
-
-# Mapping Process
-
-The mapping pipeline is:
+Map resolution:
 
 ```text
-Gazebo
-   |
-   v
-TurtleBot3
-   |
-   +----> LiDAR
-   |
-   +----> Odometry
-   |
-   v
-Cartographer
-   |
-   v
-Occupancy Map
-   |
-   v
-Saved Map
+0.05 m/pixel
 ```
 
-The saved map is later used by AMCL and Nav2.
+Map size:
+
+```text
+124 × 120 pixels
+```
+
+Approximate environment size:
+
+```text
+6.2 m × 6.0 m
+```
 
 ---
 
 # Localization
 
-The robot uses **AMCL (Adaptive Monte Carlo Localization)** to determine its position inside the saved map.
+The saved map is used by **AMCL (Adaptive Monte Carlo Localization)**.
 
-```text
-Saved Map
-    +
-LiDAR
-    +
-Odometry
-    |
-    v
-   AMCL
-    |
-    v
-Robot Pose
-```
+AMCL estimates the robot's position and orientation using:
 
-AMCL provides the robot's estimated position and orientation relative to the map.
+- Saved map
+- LiDAR `/scan`
+- Odometry
+- Robot pose
+
+This provides the robot's current location for navigation.
 
 ---
 
 # Navigation
 
-The project uses **Nav2** for autonomous navigation.
+Navigation is handled by **Nav2**.
 
-Nav2 provides:
+Nav2 uses:
 
-- Global planning
-- Local planning
 - Global costmap
 - Local costmap
-- Obstacle avoidance
-- Path replanning
-- Navigation goal execution
+- Global planner
+- Local controller
+- Recovery behaviors
+- Obstacle information
 
-The custom waypoint navigator sends navigation goals to Nav2.
+The global planner calculates a path toward the target.
 
----
-
-# Nav2 Navigation Pipeline
-
-```text
-Navigation Goal
-       |
-       v
-Global Planner
-       |
-       v
-Global Path
-       |
-       v
-Local Planner
-       |
-       v
-Local Costmap
-       |
-       v
-Velocity Commands
-       |
-       v
-TurtleBot3
-```
+The local planner follows the path while considering nearby obstacles.
 
 ---
 
-# Global Planner
+# Waypoint Navigation
 
-The global planner calculates a path from the robot's current position to the navigation goal using the global map and global costmap.
-
-```text
-Robot Position
-      |
-      v
-Global Costmap
-      |
-      v
-Global Planner
-      |
-      v
-Global Path
-      |
-      v
-Navigation Goal
-```
-
----
-
-# Local Planner
-
-The local planner controls the robot's movement while considering nearby obstacles.
+The custom Python node is called:
 
 ```text
-Robot
-  |
-  v
-LiDAR
-  |
-  v
-Local Costmap
-  |
-  v
-Local Planner
-  |
-  v
-Safe Local Path
-  |
-  v
-Robot Movement
+waypoint_navigator
 ```
 
----
-
-# Costmaps
-
-The navigation system uses two major costmaps.
-
-## Global Costmap
-
-The global costmap represents the larger navigation environment and is used primarily for global path planning.
-
-```text
-Map
- |
- v
-Global Costmap
- |
- v
-Global Planner
- |
- v
-Global Path
-```
-
-## Local Costmap
-
-The local costmap represents the nearby environment around the robot and is updated using sensor information such as LiDAR.
-
-```text
-LiDAR
- |
- v
-Local Costmap
- |
- v
-Local Planner
- |
- v
-Obstacle Avoidance
-```
-
----
-
-# Interactive Waypoints
-
-Waypoints are selected directly in RViz2 using the **Publish Point** tool.
-
-The selected coordinates are received through:
+It subscribes to:
 
 ```text
 /clicked_point
 ```
 
-Workflow:
+Waypoints are selected interactively in RViz using **Publish Point**.
 
-```text
-RViz2
-  |
-  v
-Publish Point
-  |
-  v
-/clicked_point
-  |
-  v
-Waypoint Navigator
-  |
-  v
-Store Waypoints
-  |
-  v
-Press ENTER
-  |
-  v
-Send Goals to Nav2
-  |
-  v
-Waypoint 1
-  |
-  v
-Waypoint 2
-  |
-  v
-Waypoint 3
-  |
-  v
-MISSION COMPLETE
-```
+The selected points are stored by the waypoint navigator.
 
----
-
-# Custom Waypoint Navigator
-
-The custom Python node is located at:
-
-```text
-src/autonomous_robot/autonomous_robot/waypoint_navigator.py
-```
-
-It is responsible for:
-
-- Receiving RViz waypoints
-- Storing multiple waypoints
-- Waiting for user confirmation
-- Sending goals to Nav2
-- Navigating sequentially
-- Tracking completed waypoints
-- Tracking distance remaining
-- Publishing mission status
-- Handling successful navigation
-- Handling cancellation
-- Handling navigation failures
-
----
-
-# Mission States
-
-The waypoint navigator uses the following states:
-
-```text
-READY
-NAVIGATING
-COMPLETE
-CANCELED
-FAILED
-```
-
-### READY
-
-Waiting for waypoint selection.
-
-### NAVIGATING
-
-The robot is navigating through the selected waypoints.
-
-### COMPLETE
-
-All selected waypoints have been reached.
-
-### CANCELED
-
-The current navigation mission has been canceled.
-
-### FAILED
-
-A navigation goal could not be completed successfully.
-
----
-
-# Multi-Waypoint Navigation
-
-The system supports sequential navigation through multiple waypoints.
+After pressing **ENTER**, the node sends the waypoints to Nav2 sequentially.
 
 Example:
 
 ```text
 Point A
-   |
-   v
+   ↓
 Point B
-   |
-   v
+   ↓
 Point C
-   |
-   v
+   ↓
 Point D
 ```
 
-The waypoint navigator sends each goal to Nav2 sequentially.
+The next waypoint is sent only after the previous waypoint is successfully reached.
 
 ---
 
-# Mission Progress
+# Navigation Logic
 
-The system tracks completed waypoints.
-
-Example:
+The navigation process is:
 
 ```text
-Waypoint 1 / 4
-Waypoint 2 / 4
-Waypoint 3 / 4
-Waypoint 4 / 4
-MISSION COMPLETE
+RViz Publish Point
+        ↓
+Waypoint Navigator
+        ↓
+Store waypoint
+        ↓
+Press ENTER
+        ↓
+Send Nav2 Goal
+        ↓
+AMCL provides robot pose
+        ↓
+Nav2 Global Planner
+        ↓
+Global Costmap
+        ↓
+Local Planner
+        ↓
+Local Costmap
+        ↓
+LiDAR obstacle information
+        ↓
+Robot moves
+        ↓
+Waypoint reached
+        ↓
+Send next waypoint
 ```
 
-Published through:
+The custom waypoint navigator manages waypoint selection and mission sequencing.
 
-```text
-/mission_progress
-```
-
----
-
-# Distance Tracking
-
-The system tracks the remaining distance to the current waypoint.
-
-Published through:
-
-```text
-/mission_distance
-```
-
-This information is also displayed on the web dashboard.
+The actual path planning and obstacle avoidance are handled by Nav2.
 
 ---
 
 # Dynamic Obstacle Avoidance
 
-A dynamic obstacle is introduced into Gazebo to test obstacle avoidance and path replanning.
+Dynamic obstacles can be introduced into the Gazebo environment.
 
-Obstacle dimensions:
-
-```text
-0.5 × 0.5 × 0.5 m
-```
-
-The obstacle is detected using simulated LiDAR.
+Example obstacle:
 
 ```text
-Dynamic Obstacle
-       |
-       v
-     LiDAR
-       |
-       v
-     /scan
-       |
-       v
-   Costmap Update
-       |
-       v
-  Local Planner
-       |
-       v
-   Replanning
-       |
-       v
-Obstacle Avoidance
-       |
-       v
-Robot continues to Goal
+dynamic_obstacle
 ```
 
-The robot was successfully tested navigating around a dynamically introduced obstacle.
+The obstacle is detected using the robot's simulated LiDAR.
+
+LiDAR publishes data on:
+
+```text
+/scan
+```
+
+The obstacle information updates the local costmap.
+
+Nav2 then modifies the local navigation behavior and replans around the obstacle when required.
+
+The robot can therefore continue toward the selected waypoint without requiring a new waypoint from the user.
 
 ---
 
 # Dynamic Obstacle Test
 
-A temporary obstacle can be spawned in Gazebo using:
+Example dynamic obstacle:
 
 ```bash
 ros2 run gazebo_ros spawn_entity.py \
@@ -851,78 +420,30 @@ ros2 run gazebo_ros spawn_entity.py \
   -x 2.5 -y 0.5 -z 0.25
 ```
 
-The robot can then be given a waypoint that requires navigation around the obstacle.
+Obstacle dimensions:
+
+```text
+0.5 m × 0.5 m × 0.5 m
+```
+
+The robot detects the obstacle using LiDAR and Nav2 handles the navigation around it.
 
 ---
 
-# LiDAR
+# ROS Topics
 
-The TurtleBot3 Burger uses a simulated LiDAR sensor.
+Important ROS 2 topics used by the project:
 
-Main topic:
+| Topic | Purpose |
+|---|---|
+| `/scan` | LiDAR data |
+| `/odom` | Robot odometry |
+| `/clicked_point` | RViz waypoint input |
+| `/mission_status` | Mission state |
+| `/mission_progress` | Waypoint progress |
+| `/mission_distance` | Remaining mission distance |
 
-```text
-/scan
-```
-
-LiDAR is used for:
-
-- Obstacle detection
-- Local costmap updates
-- Dynamic obstacle detection
-- Local navigation
-- Obstacle avoidance
-- Dashboard radar visualization
-
----
-
-# ROS 2 Topics
-
-Important ROS 2 topics used by the project are:
-
-```text
-/scan
-/odom
-/tf
-/tf_static
-/cmd_vel
-/clicked_point
-/mission_status
-/mission_progress
-/mission_distance
-```
-
-## `/scan`
-
-Provides simulated LiDAR data.
-
-Used for obstacle detection and navigation.
-
-## `/odom`
-
-Provides robot odometry information.
-
-## `/tf`
-
-Provides dynamic coordinate frame transformations.
-
-## `/tf_static`
-
-Provides static coordinate frame transformations.
-
-## `/cmd_vel`
-
-Used to send velocity commands to the robot.
-
-## `/clicked_point`
-
-Receives points selected using RViz2 Publish Point.
-
-## `/mission_status`
-
-Publishes the current mission state.
-
-Possible states:
+Mission status examples:
 
 ```text
 READY
@@ -932,62 +453,36 @@ CANCELED
 FAILED
 ```
 
-## `/mission_progress`
-
-Publishes the number of completed waypoints.
-
-## `/mission_distance`
-
-Publishes the remaining distance to the current waypoint.
-
 ---
 
 # RViz2
 
-RViz2 is used to visualize:
+RViz2 is used for visualization and waypoint selection.
 
-- Saved map
-- Robot
+The visualization includes:
+
+- Robot position
+- Map
 - LiDAR
-- AMCL particles
-- Robot pose
 - Global costmap
 - Local costmap
 - Global path
 - Local path
-- Selected waypoints
 - Navigation information
 
-RViz2 is also used to select waypoints using **Publish Point**.
-
----
-
-# Coordinate Frames
-
-The main TF relationship is:
+Waypoints can be selected using:
 
 ```text
-map
- |
- v
-odom
- |
- v
-base_footprint
- |
- v
-base_link
+Publish Point
 ```
-
-These frames represent the relationship between the map, odometry, robot footprint, and robot body.
 
 ---
 
 # Web Dashboard
 
-The project includes a real-time web dashboard.
+The project includes a web dashboard connected to ROS 2 using **rosbridge**.
 
-Dashboard files:
+Dashboard location:
 
 ```text
 dashboard/
@@ -996,48 +491,11 @@ dashboard/
 └── script.js
 ```
 
-The dashboard communicates with ROS 2 through **rosbridge**.
-
----
-
-# rosbridge
-
-rosbridge connects ROS 2 with the web application.
-
-```text
-ROS 2
-  |
-  v
-ROS Topics
-  |
-  v
-rosbridge
-  |
-  v
-WebSocket
-  |
-  v
-JavaScript
-  |
-  v
-Web Dashboard
-```
-
-WebSocket:
+The dashboard connects to:
 
 ```text
 ws://localhost:9090
 ```
-
-Start rosbridge manually using:
-
-```bash
-ros2 launch rosbridge_server rosbridge_websocket_launch.xml
-```
-
----
-
-# Web Dashboard Features
 
 The dashboard displays:
 
@@ -1050,285 +508,13 @@ The dashboard displays:
 - Mission status
 - Mission progress
 - Current waypoint
-- Distance remaining
+- Remaining distance
 - Selected waypoints
 - Obstacle detection
 - Environment status
 - Costmap status
 - Replanning status
 - LiDAR radar visualization
-
----
-
-# Dashboard Radar
-
-The dashboard includes a LiDAR-based radar visualization.
-
-It displays:
-
-- Detected obstacle direction
-- Approximate obstacle distance
-- Forward obstacle information
-- Dynamic obstacle activity
-
-The radar receives data from:
-
-```text
-/scan
-```
-
----
-
-# Automated Project Launcher
-
-The project contains:
-
-```text
-run_project.sh
-```
-
-The launcher starts and manages the project components in sequence:
-
-```text
-ROS 2 Environment
-       |
-       v
-Gazebo
-       |
-       v
-TurtleBot3 Burger
-       |
-       v
-AMCL
-       |
-       v
-Nav2
-       |
-       v
-RViz2
-       |
-       v
-rosbridge
-       |
-       v
-Web Dashboard
-       |
-       v
-Waypoint Navigator
-```
-
-The launcher also manages runtime logs and project processes.
-
----
-
-# Building the Workspace
-
-If the workspace needs to be rebuilt:
-
-```bash
-cd ~/autonomous_robot_ws
-colcon build --symlink-install
-source install/setup.bash
-```
-
-Verify the custom executable:
-
-```bash
-ros2 pkg executables autonomous_robot
-```
-
-Expected:
-
-```text
-autonomous_robot waypoint_navigator
-```
-
----
-
-# ROS 2 Package
-
-Package name:
-
-```text
-autonomous_robot
-```
-
-Main executable:
-
-```text
-waypoint_navigator
-```
-
-Run it using:
-
-```bash
-ros2 run autonomous_robot waypoint_navigator
-```
-
----
-
-# Package Structure
-
-```text
-src/
-└── autonomous_robot/
-    │
-    ├── autonomous_robot/
-    │   ├── __init__.py
-    │   ├── setup.py
-    │   └── waypoint_navigator.py
-    │
-    ├── resource/
-    │   └── autonomous_robot
-    │
-    ├── test/
-    │   ├── test_flake8.py
-    │   ├── test_pep257.py
-    │   └── test_copyright.py
-    │
-    ├── package.xml
-    ├── setup.cfg
-    └── setup.py
-```
-
----
-
-# Complete Navigation Flow
-
-```text
-                    GAZEBO
-                       |
-                       v
-                TurtleBot3 Burger
-                       |
-                       v
-                     LiDAR
-                       |
-                       v
-                    /scan
-                       |
-                       v
-                     AMCL
-                       |
-                       v
-                 Robot Localization
-                       |
-                       v
-                     Nav2
-                       |
-              +--------+--------+
-              |                 |
-              v                 v
-       Global Planner     Local Planner
-              |                 |
-              v                 v
-       Global Costmap     Local Costmap
-              |                 |
-              +--------+--------+
-                       |
-                       v
-              Obstacle Avoidance
-                       |
-                       v
-                  Replanning
-                       |
-                       v
-                 Robot Movement
-```
-
----
-
-# Complete Waypoint Flow
-
-```text
-RViz2
-   |
-   v
-Publish Point
-   |
-   v
-/clicked_point
-   |
-   v
-Waypoint Navigator
-   |
-   v
-Multiple Waypoints
-   |
-   v
-Press ENTER
-   |
-   v
-Nav2 Goals
-   |
-   v
-Sequential Navigation
-   |
-   v
-Mission Progress
-   |
-   v
-MISSION COMPLETE
-```
-
----
-
-# Complete Obstacle Avoidance Flow
-
-```text
-Dynamic Obstacle
-       |
-       v
-      LiDAR
-       |
-       v
-     /scan
-       |
-       v
-  Obstacle Detection
-       |
-       v
-  Local Costmap Update
-       |
-       v
-   Local Planner
-       |
-       v
-     Replanning
-       |
-       v
-  New Navigation Path
-       |
-       v
-  Robot Avoids Obstacle
-```
-
----
-
-# Complete Dashboard Flow
-
-```text
-                  ROS 2
-                    |
-        +-----------+-----------+
-        |           |           |
-        v           v           v
-      /scan     /mission_*    /clicked_point
-        |           |           |
-        +-----------+-----------+
-                    |
-                    v
-                rosbridge
-                    |
-                    v
-                WebSocket
-                    |
-                    v
-              JavaScript
-                    |
-                    v
-             Web Dashboard
-```
 
 ---
 
@@ -1348,140 +534,157 @@ autonomous_robot_ws/
 │
 ├── src/
 │   └── autonomous_robot/
-│       │
 │       ├── autonomous_robot/
-│       │   ├── __init__.py
-│       │   ├── setup.py
 │       │   └── waypoint_navigator.py
 │       │
 │       ├── resource/
-│       │   └── autonomous_robot
-│       │
 │       ├── test/
-│       │   ├── test_copyright.py
-│       │   ├── test_flake8.py
-│       │   └── test_pep257.py
-│       │
 │       ├── package.xml
-│       ├── setup.cfg
-│       └── setup.py
+│       ├── setup.py
+│       └── setup.cfg
 │
 ├── .gitignore
 ├── README.md
 └── run_project.sh
 ```
 
+Generated ROS 2 directories such as `build/`, `install/`, and `log/` are not included in the repository.
+
 ---
 
-# Important ROS 2 Components
+# Automated Launcher
 
-| Component | Role |
-|---|---|
-| Gazebo | Simulates the robot and environment |
-| TurtleBot3 Burger | Simulated autonomous robot |
-| LiDAR | Detects surrounding obstacles |
-| Cartographer | Creates the environment map |
-| AMCL | Localizes the robot on the saved map |
-| Nav2 | Performs autonomous navigation |
-| Global Planner | Calculates the global navigation path |
-| Local Planner | Handles local movement and obstacle avoidance |
-| Global Costmap | Represents the global navigation environment |
-| Local Costmap | Represents nearby obstacles |
-| RViz2 | Visualizes ROS 2 navigation data |
-| Waypoint Navigator | Handles user-selected navigation points |
-| rosbridge | Connects ROS 2 with the web dashboard |
-| Web Dashboard | Displays real-time robot and mission information |
+The project includes:
+
+```text
+run_project.sh
+```
+
+The launcher automatically handles the main startup sequence.
+
+It starts:
+
+```text
+Gazebo
+   ↓
+AMCL
+   ↓
+Nav2
+   ↓
+RViz2
+   ↓
+rosbridge
+   ↓
+Dashboard
+   ↓
+Waypoint Navigator
+```
+
+Runtime logs are stored separately in:
+
+```text
+project_logs/
+```
+
+---
+
+# Build
+
+If the source code is modified, rebuild the workspace:
+
+```bash
+cd ~/autonomous_robot_ws
+
+source /opt/ros/humble/setup.bash
+
+colcon build --symlink-install
+
+source install/setup.bash
+```
+
+---
+
+# Complete Project Flow
+
+```text
+1. Start WSL Ubuntu
+        ↓
+2. Run run_project.sh
+        ↓
+3. Gazebo starts
+        ↓
+4. TurtleBot3 Burger starts
+        ↓
+5. AMCL starts
+        ↓
+6. Nav2 starts
+        ↓
+7. RViz2 starts
+        ↓
+8. rosbridge starts
+        ↓
+9. Web dashboard connects
+        ↓
+10. User selects waypoints in RViz
+        ↓
+11. User presses ENTER
+        ↓
+12. Waypoint Navigator sends goals
+        ↓
+13. AMCL provides robot localization
+        ↓
+14. Nav2 plans the route
+        ↓
+15. LiDAR detects obstacles
+        ↓
+16. Costmaps are updated
+        ↓
+17. Nav2 avoids/replans around obstacles
+        ↓
+18. Robot reaches each waypoint
+        ↓
+19. Final waypoint reached
+        ↓
+20. MISSION COMPLETE
+```
 
 ---
 
 # Project Status
 
-The project has been successfully implemented and tested with:
+The following components have been implemented and tested:
 
 - ROS 2 Humble
-- Ubuntu 22.04
-- WSL2
-- Gazebo
+- Gazebo simulation
 - TurtleBot3 Burger
-- LiDAR
-- Cartographer Mapping
-- Saved Map
-- AMCL Localization
-- Nav2
-- Global Planning
-- Local Planning
-- Global Costmap
-- Local Costmap
-- Obstacle Avoidance
-- Dynamic Obstacle Detection
-- Nav2 Replanning
-- RViz2
-- Interactive Waypoints
-- Custom Waypoint Navigator
-- Multi-Waypoint Navigation
-- Mission Progress
-- Distance Tracking
-- ROS 2 Mission Topics
+- Simulated LiDAR
+- Cartographer mapping
+- Saved map
+- AMCL localization
+- Nav2 navigation
+- Global planning
+- Local planning
+- Global and local costmaps
+- Interactive RViz waypoints
+- Custom Python waypoint navigator
+- Sequential waypoint navigation
+- Mission progress tracking
+- Mission distance tracking
+- Dynamic obstacle detection
+- Dynamic obstacle avoidance
+- Replanning
 - rosbridge
-- Web Dashboard
-- LiDAR Obstacle Detection
-- Dashboard Radar
-- Automated Project Launcher
-
-The complete system operates entirely in simulation and does not require physical robot hardware.
-
----
-
-# GitHub Repository
-
-The project is available on GitHub:
-
-**https://github.com/Akadestroyers777/autonomous-robot-navigation-ros2**
-
----
-
-# Git Workflow
-
-After making changes:
-
-```bash
-cd ~/autonomous_robot_ws
-```
-
-Check the changes:
-
-```bash
-git status
-```
-
-Stage the changes:
-
-```bash
-git add .
-```
-
-Commit:
-
-```bash
-git commit -m "Describe your changes"
-```
-
-Push:
-
-```bash
-git push
-```
-
-The repository uses SSH authentication.
+- Web dashboard
+- Automated project launcher
+- GitHub repository
 
 ---
 
 # Author
 
-**Sai Shrinivas N**
+**N SAISHRINIVAS**
 
-**Vellore Institute of Technology**
+Vellore Institute of Technology
 
-### Project
-
-**Autonomous Robot Navigation and Dynamic Obstacle Avoidance Using ROS 2**
+AI & Robotics
+```
