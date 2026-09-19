@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Autonomous Robot Navigation Dashboard</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- ================= TOP BAR ================= -->
+
+    <header class="topbar">
+
+        <div>
+            <h1>Autonomous Robot Navigation</h1>
+            <p>ROS 2 • TurtleBot3 Burger • Nav2</p>
+        </div>
+
+        <div class="system-status">
+            <span class="status-dot"></span>
+            <span>ROS SYSTEM ONLINE</span>
+        </div>
+
+    </header>
+
+
+    <!-- ================= DASHBOARD ================= -->
+
+    <main class="dashboard">
+
+
+        <!-- ================= ROBOT STATUS ================= -->
+
+        <section class="card robot-status">
+
+            <h2>Robot Status</h2>
+
+            <div class="status-main">
+
+                <span class="big-dot"></span>
+
+                <div>
+                    <h3 id="robotState">
+                        AUTONOMOUS
+                    </h3>
+
+                    <p id="robotDescription">
+                        Robot is ready for navigation
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="info-grid">
+
+                <div class="info-box">
+                    <span>Navigation</span>
+                    <strong id="navigationStatus">
+                        READY
+                    </strong>
+                </div>
+
+
+                <div class="info-box">
+                    <span>Localization</span>
+                    <strong id="localizationStatus">
+                        AMCL ACTIVE
+                    </strong>
+                </div>
+
+
+                <div class="info-box">
+                    <span>Planner</span>
+                    <strong id="plannerStatus">
+                        NAV2 ACTIVE
+                    </strong>
+                </div>
+
+
+                <div class="info-box">
+                    <span>LiDAR</span>
+                    <strong id="lidarStatus">
+                        ONLINE
+                    </strong>
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ================= MISSION PROGRESS ================= -->
+
+        <section class="card mission">
+
+            <div class="card-header">
+
+                <h2>
+                    Mission Progress
+                </h2>
+
+                <span
+                    id="missionStatus"
+                    class="badge">
+                    READY
+                </span>
+
+            </div>
+
+
+            <div class="progress-section">
+
+                <div class="progress-label">
+
+                    <span>
+                        Waypoints
+                    </span>
+
+                    <strong id="progressText">
+                        0 / 0
+                    </strong>
+
+                </div>
+
+
+                <div class="progress-bar">
+
+                    <div
+                        id="progressFill">
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="mission-details">
+
+                <div>
+
+                    <span>
+                        Current Waypoint
+                    </span>
+
+                    <strong id="currentWaypoint">
+                        —
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Distance Remaining
+                    </span>
+
+                    <strong id="distanceRemaining">
+                        —
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Mission
+                    </span>
+
+                    <strong id="missionType">
+                        Interactive
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ================= OBSTACLE DETECTION ================= -->
+
+        <section class="card obstacle">
+
+            <div class="card-header">
+
+                <h2>
+                    Obstacle Detection
+                </h2>
+
+                <span
+                    id="obstacleBadge"
+                    class="badge safe">
+                    CLEAR
+                </span>
+
+            </div>
+
+
+            <div class="obstacle-display">
+
+
+                <!-- RADAR -->
+
+                <div class="radar">
+
+                    <div class="radar-circle">
+
+                        <div class="radar-line"></div>
+
+                        <div class="robot-marker"></div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- OBSTACLE INFORMATION -->
+
+                <div class="obstacle-info">
+
+
+                    <div class="info-box">
+
+                        <span>
+                            Sensor
+                        </span>
+
+                        <strong>
+                            LiDAR /scan
+                        </strong>
+
+                    </div>
+
+
+                    <div class="info-box">
+
+                        <span>
+                            Environment
+                        </span>
+
+                        <strong id="environmentStatus">
+                            CLEAR
+                        </strong>
+
+                    </div>
+
+
+                    <div class="info-box">
+
+                        <span>
+                            Costmap
+                        </span>
+
+                        <strong id="costmapStatus">
+                            UPDATED
+                        </strong>
+
+                    </div>
+
+
+                    <div class="info-box">
+
+                        <span>
+                            Replanning
+                        </span>
+
+                        <strong id="replanningStatus">
+                            STANDBY
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ================= WAYPOINTS ================= -->
+
+        <section class="card waypoint-card">
+
+            <div class="card-header">
+
+                <h2>
+                    Selected Waypoints
+                </h2>
+
+                <span class="badge">
+                    RViz /clicked_point
+                </span>
+
+            </div>
+
+
+            <div
+                id="waypointList"
+                class="waypoint-list">
+
+                <div class="empty-state">
+                    No waypoints selected
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ================= ARCHITECTURE ================= -->
+
+        <section class="card architecture">
+
+            <h2>
+                Navigation Architecture
+            </h2>
+
+
+            <div class="architecture-flow">
+
+
+                <div class="architecture-node">
+
+                    <strong>
+                        Gazebo
+                    </strong>
+
+                    <span>
+                        TurtleBot3
+                    </span>
+
+                </div>
+
+
+                <div class="arrow">
+                    →
+                </div>
+
+
+                <div class="architecture-node">
+
+                    <strong>
+                        LiDAR
+                    </strong>
+
+                    <span>
+                        /scan
+                    </span>
+
+                </div>
+
+
+                <div class="arrow">
+                    →
+                </div>
+
+
+                <div class="architecture-node">
+
+                    <strong>
+                        AMCL
+                    </strong>
+
+                    <span>
+                        Localization
+                    </span>
+
+                </div>
+
+
+                <div class="arrow">
+                    →
+                </div>
+
+
+                <div class="architecture-node">
+
+                    <strong>
+                        Nav2
+                    </strong>
+
+                    <span>
+                        Planning
+                    </span>
+
+                </div>
+
+
+                <div class="arrow">
+                    →
+                </div>
+
+
+                <div class="architecture-node">
+
+                    <strong>
+                        Robot
+                    </strong>
+
+                    <span>
+                        Navigation
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+    </main>
+
+
+
+    <!-- ================= FOOTER ================= -->
+
+    <footer>
+
+        Autonomous Robot Navigation and Dynamic Obstacle Avoidance Using ROS 2
+
+    </footer>
+
+
+
+    <!-- ================= ROSLIB ================= -->
+
+    <!-- Connect browser JavaScript to ROS 2 through rosbridge -->
+
+    <script src="https://cdn.jsdelivr.net/npm/roslib/build/roslib.min.js"></script>
+
+    <script src="script.js"></script>
+
+
+</body>
+
+</html>

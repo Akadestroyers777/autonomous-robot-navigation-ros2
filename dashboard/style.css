@@ -1,0 +1,411 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #0b1120;
+    color: #e5e7eb;
+    min-height: 100vh;
+}
+
+/* ---------- TOP BAR ---------- */
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 22px 35px;
+    background: #111827;
+    border-bottom: 1px solid #263244;
+}
+
+.topbar h1 {
+    font-size: 25px;
+    margin-bottom: 6px;
+}
+
+.topbar p {
+    color: #9ca3af;
+    font-size: 14px;
+}
+
+.system-status {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 13px;
+    font-weight: bold;
+    color: #34d399;
+}
+
+.status-dot,
+.big-dot {
+    border-radius: 50%;
+    background: #22c55e;
+}
+
+.status-dot {
+    width: 10px;
+    height: 10px;
+}
+
+.big-dot {
+    width: 15px;
+    height: 15px;
+}
+
+/* ---------- DASHBOARD ---------- */
+
+.dashboard {
+    padding: 30px 35px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 22px;
+    max-width: 1500px;
+    margin: auto;
+}
+
+/* ---------- CARDS ---------- */
+
+.card {
+    background: #111827;
+    border: 1px solid #263244;
+    border-radius: 14px;
+    padding: 24px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+}
+
+.card h2 {
+    font-size: 18px;
+    margin-bottom: 20px;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* ---------- ROBOT STATUS ---------- */
+
+.status-main {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 25px;
+}
+
+.status-main h3 {
+    font-size: 20px;
+    margin-bottom: 4px;
+}
+
+.status-main p {
+    color: #9ca3af;
+    font-size: 13px;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+.info-box {
+    background: #0b1120;
+    border: 1px solid #263244;
+    border-radius: 10px;
+    padding: 14px;
+}
+
+.info-box span {
+    display: block;
+    color: #9ca3af;
+    font-size: 12px;
+    margin-bottom: 7px;
+}
+
+.info-box strong {
+    font-size: 14px;
+}
+
+/* ---------- BADGES ---------- */
+
+.badge {
+    background: #1e293b;
+    border-radius: 20px;
+    padding: 6px 12px;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.badge.safe {
+    color: #34d399;
+}
+
+/* ---------- PROGRESS ---------- */
+
+.progress-section {
+    margin-top: 8px;
+}
+
+.progress-label {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.progress-label span {
+    color: #9ca3af;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 10px;
+    background: #1f2937;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+#progressFill {
+    width: 0%;
+    height: 100%;
+    border-radius: 10px;
+    background: #22c55e;
+    transition: width 0.5s ease;
+}
+
+.mission-details {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-top: 25px;
+}
+
+.mission-details div {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.mission-details span {
+    color: #9ca3af;
+    font-size: 12px;
+}
+
+.mission-details strong {
+    font-size: 14px;
+}
+
+/* ---------- OBSTACLE ---------- */
+
+.obstacle-display {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+    align-items: center;
+}
+
+.radar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.radar-circle {
+    width: 190px;
+    height: 190px;
+    border: 2px solid #334155;
+    border-radius: 50%;
+    position: relative;
+    background:
+        radial-gradient(circle, transparent 30%, #172033 31%, transparent 32%),
+        radial-gradient(circle, transparent 60%, #172033 61%, transparent 62%);
+}
+
+.radar-circle::before,
+.radar-circle::after {
+    content: "";
+    position: absolute;
+    background: #334155;
+}
+
+.radar-circle::before {
+    width: 100%;
+    height: 1px;
+    top: 50%;
+    left: 0;
+}
+
+.radar-circle::after {
+    width: 1px;
+    height: 100%;
+    top: 0;
+    left: 50%;
+}
+
+.radar-line {
+    position: absolute;
+    width: 2px;
+    height: 50%;
+    left: 50%;
+    top: 0;
+    background: #22c55e;
+    transform-origin: bottom;
+    animation: radarSweep 2.5s linear infinite;
+}
+
+@keyframes radarSweep {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.robot-marker {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    background: #22c55e;
+    border-radius: 50%;
+    left: calc(50% - 7px);
+    top: calc(50% - 7px);
+}
+
+.obstacle-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+/* ---------- WAYPOINTS ---------- */
+
+.waypoint-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 25px;
+    color: #64748b;
+    border: 1px dashed #334155;
+    border-radius: 10px;
+}
+
+.waypoint {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #0b1120;
+    border: 1px solid #263244;
+    border-radius: 9px;
+    padding: 13px 16px;
+}
+
+.waypoint-number {
+    font-weight: bold;
+}
+
+.waypoint-coordinates {
+    color: #9ca3af;
+    font-family: monospace;
+}
+
+/* ---------- ARCHITECTURE ---------- */
+
+.architecture {
+    grid-column: 1 / -1;
+}
+
+.architecture-flow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.architecture-node {
+    background: #0b1120;
+    border: 1px solid #334155;
+    border-radius: 10px;
+    padding: 14px 18px;
+    text-align: center;
+    min-width: 120px;
+}
+
+.architecture-node strong {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.architecture-node span {
+    color: #9ca3af;
+    font-size: 12px;
+}
+
+.arrow {
+    color: #64748b;
+    font-size: 22px;
+}
+
+/* ---------- FOOTER ---------- */
+
+footer {
+    text-align: center;
+    padding: 25px;
+    color: #64748b;
+    font-size: 12px;
+}
+
+/* ---------- RESPONSIVE ---------- */
+
+@media (max-width: 900px) {
+
+    .dashboard {
+        grid-template-columns: 1fr;
+    }
+
+    .architecture {
+        grid-column: auto;
+    }
+
+    .obstacle-display {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+@media (max-width: 600px) {
+
+    .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .dashboard {
+        padding: 20px;
+    }
+
+    .mission-details {
+        grid-template-columns: 1fr;
+    }
+
+    .architecture-flow {
+        flex-direction: column;
+    }
+
+    .arrow {
+        transform: rotate(90deg);
+    }
+
+}
